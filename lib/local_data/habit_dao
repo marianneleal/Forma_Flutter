@@ -1,0 +1,12 @@
+abstract class HabitDao {
+    @Query('SELECT * FROM habit')
+    Future<List<Habit>> getAllHabits();
+
+    @Insert(onConflict: OnConflictStrategy.replace)
+    Future<void> insertHabit(Habit habit);
+
+    @Query('DELETE FROM habit WHERE id = :id')
+    Future<void> deleteHabit(int id);
+
+    
+}
