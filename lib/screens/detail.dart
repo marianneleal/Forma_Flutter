@@ -22,6 +22,7 @@ class _DetailState extends State<Detail> {
   late DateTime? _dueDate;
   late Color _color;
   List<Task> _tasks = [];
+  bool _colorPickerOpen = false;
 
   @override
   void initState() {
@@ -83,14 +84,22 @@ class _DetailState extends State<Detail> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              const Text(
-                'Color',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
+              InkWell(
+                child: const Text(
+                  'Color',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
                 ),
+                onTap: () {
+                  setState(() {
+                    _colorPickerOpen = !_colorPickerOpen;
+                  });
+                },
               ),
               const SizedBox(height: 8.0),
+              // todo if color picker is open, show color picker
               ColorPicker(
                 pickerColor: _color,
                 onColorChanged: (color) {
@@ -100,6 +109,7 @@ class _DetailState extends State<Detail> {
                   });
                 },
               ),
+
               SizedBox(
                 height: 36.0,
                 child: Row(
@@ -120,28 +130,8 @@ class _DetailState extends State<Detail> {
               if (_hasDueDate && _dueDate != null)
                 SizedBox(
                   height: 36.0,
-                  child: Row(
-                    children: [
-                      Text("Due Date: " +
-                          DateFormat('d MMM').format(_dueDate!).toString()),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: _dueDate!,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (date != null) {
-                            setState(() {
-                              _dueDate = date;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  child: Text("Due Date: " +
+                      DateFormat('d MMM').format(_dueDate!).toString()),
                 ),
               ListView(
                 shrinkWrap: true,
