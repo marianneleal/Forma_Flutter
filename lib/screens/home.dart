@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:forma_flutter/model/habit.dart';
 import 'package:forma_flutter/widgets/habit_row.dart';
-
-import '../model/task.dart';
-import '../widgets/task_row.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -23,17 +21,33 @@ class _HomeState extends State<Home> {
         ),
         body: Column(
           children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  HabitRow(),
-                  TaskRow(
-                      task:
-                          Task(id: 1, name: 'Drink water', isCompleted: false))
-                ],
-              ),
-            )
+            FutureBuilder<List<Habit>>(
+                future: DatabaseHelper.instance.getHabits(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<Habit>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return snapshot.data!.isEmpty
+                      ? const Center(child: Text("No habits yet. Add one!"))
+                      : ListView(
+                          shrinkWrap: true,
+                          children: snapshot.data!
+                              .map((habit) => HabitRow(habit: habit))
+                              .toList(),
+                        );
+                }),
           ],
-        ));
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Detail()),
+            );
+          },
+          child: const Icon(Icons.add),
+          backgroundColor: Colors.purple
+        );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forma_flutter/screens/home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const FormaApp());
 }
 
