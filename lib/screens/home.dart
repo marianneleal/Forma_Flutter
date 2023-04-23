@@ -40,14 +40,13 @@ class _HomeState extends State<Home> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Detail()),
-            );
-          },
-          child: const Icon(Icons.add),
-          backgroundColor: Colors.purple
-        );
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Detail()),
+              );
+            },
+            child: const Icon(Icons.add),
+            backgroundColor: Colors.purple));
   }
 }

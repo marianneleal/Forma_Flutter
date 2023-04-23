@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:forma_flutter/model/habit.dart';
 
 class HabitRow extends StatelessWidget {
-  const HabitRow({Key? key}) : super(key: key);
+  const HabitRow({Key? key, required this.habit}) : super(key: key);
+  final Habit habit;
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +21,16 @@ class HabitRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Habit Name',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Habit Description',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
+              Row(
+                children: [
+                  //todo: color
+                  Text(habit.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              )
             ],
           ),
           const Spacer(),
