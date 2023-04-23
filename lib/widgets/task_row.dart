@@ -23,7 +23,7 @@ class _TaskRowState extends State<TaskRow> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 20, bottom: 20),
+      margin: const EdgeInsets.only(top: 2, bottom: 2),
       child: Row(
         children: [
           Container(

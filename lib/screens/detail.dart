@@ -84,32 +84,51 @@ class _DetailState extends State<Detail> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              InkWell(
-                child: const Text(
-                  'Color',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  elevation: 2.0,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      InkWell(
+                        child: const Text(
+                          'Color',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _colorPickerOpen = !_colorPickerOpen;
+                          });
+                        },
+                      ),
+                      Container(
+                        width: 35.0,
+                        height: 35.0,
+                        decoration: BoxDecoration(
+                          color: _color,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                onTap: () {
-                  setState(() {
-                    _colorPickerOpen = !_colorPickerOpen;
-                  });
-                },
               ),
               const SizedBox(height: 8.0),
-              // todo if color picker is open, show color picker
-              ColorPicker(
-                pickerColor: _color,
-                onColorChanged: (color) {
-                  setState(() {
-                    _color = color;
-                    print(color);
-                  });
-                },
-              ),
-
+              if (_colorPickerOpen)
+                ColorPicker(
+                  pickerColor: _color,
+                  onColorChanged: (color) {
+                    setState(() {
+                      _color = color;
+                      print(color);
+                    });
+                  },
+                ),
               SizedBox(
                 height: 36.0,
                 child: Row(
@@ -195,14 +214,17 @@ class _DetailState extends State<Detail> {
         ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        await DatabaseHelper.instance.insertHabit(
+        final habitId = await DatabaseHelper.instance.insertHabit(
           Habit(
             name: _nameController.text,
             color: _color.value,
             dueDate: _dueDate,
           ),
-          // todo insert tasks
         );
+        for (Task task in _tasks) {
+          task.habitId = habitId;
+        }
+        await DatabaseHelper.instance.insertTasks(_tasks);
         Navigator.pop(context);
       }),
     );

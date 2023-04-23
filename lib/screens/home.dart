@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:forma_flutter/local_data/DatabaseHelper.dart';
 import 'package:forma_flutter/model/habit.dart';
 import 'package:forma_flutter/widgets/habit_row.dart';
+import 'package:forma_flutter/screens/detail.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,6 +12,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var future = DatabaseHelper.instance.getHabits();
+
+  // on appear callback
+  @override
+  void initState() {
+    super.initState();
+    future = DatabaseHelper.instance.getHabits();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +33,7 @@ class _HomeState extends State<Home> {
         body: Column(
           children: [
             FutureBuilder<List<Habit>>(
-                future: DatabaseHelper.instance.getHabits(),
+                future: future,
                 builder: (BuildContext context,
                     AsyncSnapshot<List<Habit>> snapshot) {
                   if (!snapshot.hasData) {
@@ -43,7 +54,7 @@ class _HomeState extends State<Home> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Detail()),
+                MaterialPageRoute(builder: (context) => Detail()),
               );
             },
             child: const Icon(Icons.add),

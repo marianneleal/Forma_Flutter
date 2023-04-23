@@ -23,7 +23,7 @@ class HabitRow extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  //todo: color
+                  // Color(habit.color)
                   Text(habit.name,
                       style: const TextStyle(
                         fontSize: 20,

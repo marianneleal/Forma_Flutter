@@ -69,9 +69,13 @@ class DatabaseHelper {
     return taskList;
   }
 
-  Future<int> insertTask(Task task) async {
+  Future insertTasks(List<Task> tasks) async {
     Database db = await instance.database;
-    return await db.insert('tasks', task.toMap());
+    Batch batch = db.batch();
+    for (Task task in tasks) {
+      batch.insert('tasks', task.toMap());
+    }
+    return await batch.commit(noResult: true);
   }
 
   Future<int> updateTask(Task task) async {
