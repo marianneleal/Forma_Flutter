@@ -286,36 +286,39 @@ class _DetailState extends State<Detail> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () async {
-        if (widget.habit?.id == null) {
-          final habitId = await DatabaseHelper.instance.insertHabit(Habit(
-            name: _nameController.text,
-            color: _color.value,
-            dueDate: _dueDate,
-          ));
-          for (Task task in _tasks) {
-            task.habitId = habitId;
-          }
-        } else {
-          widget.habit!.name = _nameController.text;
-          widget.habit!.color = _color.value;
-          widget.habit!.dueDate = _dueDate;
-          await DatabaseHelper.instance.updateHabit(widget.habit!);
-          for (Task task in _tasks) {
-            task.habitId = widget.habit!.id!;
-          }
-        }
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.save),
+          onPressed: () async {
+            if (widget.habit?.id == null) {
+              final habitId = await DatabaseHelper.instance.insertHabit(Habit(
+                name: _nameController.text,
+                color: _color.value,
+                dueDate: _dueDate,
+              ));
+              for (Task task in _tasks) {
+                task.habitId = habitId;
+              }
+            } else {
+              widget.habit!.name = _nameController.text;
+              widget.habit!.color = _color.value;
+              widget.habit!.dueDate = _dueDate;
+              await DatabaseHelper.instance.updateHabit(widget.habit!);
+              for (Task task in _tasks) {
+                task.habitId = widget.habit!.id!;
+              }
+            }
 
-        final newTasks = _tasks.where((task) => task.id == null).toList();
-        final existingTasks = _tasks.where((task) => task.id != null).toList();
+            final newTasks = _tasks.where((task) => task.id == null).toList();
+            final existingTasks =
+                _tasks.where((task) => task.id != null).toList();
 
-        // await two futures
-        await Future.wait([
-          DatabaseHelper.instance.insertTasks(newTasks),
-          DatabaseHelper.instance.updateTasks(existingTasks),
-        ]);
-        Navigator.pop(context);
-      }),
+            // await two futures
+            await Future.wait([
+              DatabaseHelper.instance.insertTasks(newTasks),
+              DatabaseHelper.instance.updateTasks(existingTasks),
+            ]);
+            Navigator.pop(context);
+          }),
     );
   }
 
