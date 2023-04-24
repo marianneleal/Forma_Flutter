@@ -50,33 +50,35 @@ class _HomeState extends State<Home> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return snapshot.data!.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(80.0),
-                            child: const Center(
+                        ? const Padding(
+                            padding: EdgeInsets.all(80.0),
+                            child: Center(
                                 child: Text("No habits yet. Add one!",
                                     style: TextStyle(fontSize: 20))),
                           )
-                        : ListView(
-                            shrinkWrap: true,
-                            children: snapshot.data!
-                                .map((habit) => Dismissible(
-                                    key: Key(habit.id.toString()),
-                                    background: Container(
-                                      color: Colors.red,
-                                      child: const Icon(Icons.delete),
-                                    ),
-                                    direction: DismissDirection.endToStart,
-                                    onDismissed: (direction) {
-                                      DatabaseHelper.instance
-                                          .deleteHabit(habit.id!);
-                                      setState(() {
-                                        future =
-                                            DatabaseHelper.instance.getHabits();
-                                        snapshot.data!.remove(habit);
-                                      });
-                                    },
-                                    child: HabitRow(habit: habit)))
-                                .toList(),
+                        : Expanded(
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: snapshot.data!
+                                  .map((habit) => Dismissible(
+                                      key: Key(habit.id.toString()),
+                                      background: Container(
+                                        color: Colors.red,
+                                        child: const Icon(Icons.delete),
+                                      ),
+                                      direction: DismissDirection.endToStart,
+                                      onDismissed: (direction) {
+                                        DatabaseHelper.instance
+                                            .deleteHabit(habit.id!);
+                                        setState(() {
+                                          future = DatabaseHelper.instance
+                                              .getHabits();
+                                          snapshot.data!.remove(habit);
+                                        });
+                                      },
+                                      child: HabitRow(habit: habit)))
+                                  .toList(),
+                            ),
                           );
                   }),
             ],
