@@ -20,7 +20,7 @@ class Detail extends StatefulWidget {
 class _DetailState extends State<Detail> {
   late TextEditingController _nameController;
   late bool _hasDueDate;
-  late DateTime? _dueDate;
+  DateTime? _dueDate;
   late Color _color;
   List<Task> _tasks = [];
   bool _colorPickerOpen = false;
@@ -31,13 +31,16 @@ class _DetailState extends State<Detail> {
     if (widget.habit != null) {
       _nameController = TextEditingController(text: widget.habit!.name);
       _hasDueDate = widget.habit!.dueDate != null;
-      _dueDate = widget.habit!.dueDate!;
+      if (widget.habit!.dueDate != null) {
+        _dueDate = widget.habit!.dueDate;
+      }
+
       _color = Color(widget.habit!.color);
       _fetchTasks();
     } else {
       _nameController = TextEditingController();
       _hasDueDate = false;
-      _dueDate = DateTime.now();
+      _dueDate = null;
       _color = Colors.grey;
     }
   }
@@ -309,7 +312,7 @@ class _DetailState extends State<Detail> {
         // await two futures
         await Future.wait([
           DatabaseHelper.instance.insertTasks(newTasks),
-          //DatabaseHelper.instance.updateTasks(existingTasks),
+          DatabaseHelper.instance.updateTasks(existingTasks),
         ]);
         Navigator.pop(context);
       }),
