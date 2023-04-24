@@ -83,37 +83,41 @@ class _DetailState extends State<Detail> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Material(
-                  elevation: 2.0,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      InkWell(
-                        child: const Text(
-                          'Color',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _colorPickerOpen = !_colorPickerOpen;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Material(
+                    elevation: 2.0,
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          const Text(
+                            'Color',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            ),
                           ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            _colorPickerOpen = !_colorPickerOpen;
-                          });
-                        },
+                          Container(
+                            width: 35.0,
+                            height: 35.0,
+                            decoration: BoxDecoration(
+                              color: _color,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        ],
                       ),
-                      Container(
-                        width: 35.0,
-                        height: 35.0,
-                        decoration: BoxDecoration(
-                          color: _color,
-                          shape: BoxShape.circle,
-                        ),
-                      )
-                    ],
+                    ),
                   ),
                 ),
               ),

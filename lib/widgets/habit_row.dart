@@ -9,44 +9,47 @@ class HabitRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Detail(habit: habit)),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(top: 10, bottom: 10),
-        child: Material(
-          borderRadius: BorderRadius.circular(10.0),
-          elevation: 3.0,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Container(
-                  constraints: BoxConstraints(minWidth: 50),
-                  width: 35.0,
-                  height: 35.0,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: BoxDecoration(
-                    color: Color(habit.color),
-                    shape: BoxShape.circle,
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Detail(habit: habit)),
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.only(top: 10, bottom: 10),
+          child: Material(
+            borderRadius: BorderRadius.circular(4.0),
+            elevation: 3.0,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    constraints: BoxConstraints(minWidth: 50),
+                    width: 35.0,
+                    height: 35.0,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.only(left: 4, right: 20),
+                    decoration: BoxDecoration(
+                      color: Color(habit.color),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                Text(habit.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                    )),
-                const Spacer(),
-                // Container(
-                //   margin: const EdgeInsets.only(right: 20),
-                //   child: const Icon(Icons.arrow_forward_ios,
-                //       size: 30, color: Colors.grey),
-                // ),
-              ],
+                  Text(habit.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      )),
+                  const Spacer(),
+                  // Container(
+                  //   margin: const EdgeInsets.only(right: 20),
+                  //   child: const Icon(Icons.arrow_forward_ios,
+                  //       size: 30, color: Colors.grey),
+                  // ),
+                ],
+              ),
             ),
           ),
         ),
