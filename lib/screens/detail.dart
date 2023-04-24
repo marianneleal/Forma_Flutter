@@ -9,7 +9,6 @@ import '../widgets/task_row.dart';
 
 class Detail extends StatefulWidget {
   final Habit? habit;
-  Color selectedColor = Colors.grey;
   Detail({Key? key, this.habit}) : super(key: key);
 
   @override
@@ -157,8 +156,22 @@ class _DetailState extends State<Detail> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   for (final task in _tasks)
-                    TaskRow(
-                      task: task,
+                    Dismissible(
+                      key: Key(task.id.toString()),
+                      background: Container(
+                          color: Colors.red, child: const Icon(Icons.delete)),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) {
+                        if (task.id != null) {
+                          DatabaseHelper.instance.deleteTask(task.id!);
+                        }
+                        setState(() {
+                          _tasks.remove(task);
+                        });
+                      },
+                      child: TaskRow(
+                        task: task,
+                      ),
                     )
                 ],
               ),

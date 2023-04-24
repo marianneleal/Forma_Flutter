@@ -44,7 +44,23 @@ class _HomeState extends State<Home> {
                       : ListView(
                           shrinkWrap: true,
                           children: snapshot.data!
-                              .map((habit) => HabitRow(habit: habit))
+                              .map((habit) => Dismissible(
+                                  key: Key(habit.id.toString()),
+                                  background: Container(
+                                    color: Colors.red,
+                                    child: const Icon(Icons.delete),
+                                  ),
+                                  direction: DismissDirection.endToStart,
+                                  onDismissed: (direction) {
+                                    DatabaseHelper.instance
+                                        .deleteHabit(habit.id!);
+                                    setState(() {
+                                      future =
+                                          DatabaseHelper.instance.getHabits();
+                                      snapshot.data!.remove(habit);
+                                    });
+                                  },
+                                  child: HabitRow(habit: habit)))
                               .toList(),
                         );
                 }),
