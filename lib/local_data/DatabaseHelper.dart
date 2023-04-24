@@ -19,12 +19,13 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE habits(
+      CREATE TABLE habits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         color INTEGER NOT NULL,
-        dueDate TEXT
-      )
+        dueDate TEXT,
+        UNIQUE(id) ON CONFLICT REPLACE
+);
     ''');
     await db.execute('''
       CREATE TABLE tasks(
@@ -32,7 +33,7 @@ class DatabaseHelper {
         name TEXT NOT NULL,
         isCompleted INTEGER NOT NULL,
         habitId INTEGER NOT NULL,
-        FOREIGN KEY (habitId) REFERENCES habits(id)
+        FOREIGN KEY (habitId) REFERENCES habits(id),
       )
     ''');
   }

@@ -25,7 +25,7 @@ class _TaskRowState extends State<TaskRow> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(4.0),
         elevation: 3.0,
         child: Row(
           children: [

@@ -43,11 +43,6 @@ class HabitRow extends StatelessWidget {
                         fontSize: 20,
                       )),
                   const Spacer(),
-                  // Container(
-                  //   margin: const EdgeInsets.only(right: 20),
-                  //   child: const Icon(Icons.arrow_forward_ios,
-                  //       size: 30, color: Colors.grey),
-                  // ),
                 ],
               ),
             ),

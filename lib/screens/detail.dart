@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:forma_flutter/local_data/DatabaseHelper.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import '../model/habit.dart';
 import '../model/task.dart';
 import 'package:intl/intl.dart';
-
 import '../widgets/task_row.dart';
 
 class Detail extends StatefulWidget {
@@ -31,19 +33,20 @@ class _DetailState extends State<Detail> {
       _hasDueDate = widget.habit!.dueDate != null;
       _dueDate = widget.habit!.dueDate!;
       _color = Color(widget.habit!.color);
+      _fetchTasks();
     } else {
       _nameController = TextEditingController();
       _hasDueDate = false;
       _dueDate = DateTime.now();
       _color = Colors.grey;
     }
-    _fetchTasks();
   }
 
   Future<void> _fetchTasks() async {
     if (widget.habit != null) {
       _tasks =
           await DatabaseHelper.instance.getTasksByHabitId(widget.habit!.id!);
+      setState(() {});
     }
   }
 
@@ -75,6 +78,7 @@ class _DetailState extends State<Detail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8.0),
+              Text("HABIT INFO"),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -93,7 +97,7 @@ class _DetailState extends State<Detail> {
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
                     elevation: 2.0,
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(4.0),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -132,97 +136,148 @@ class _DetailState extends State<Detail> {
                     });
                   },
                 ),
-              SizedBox(
-                height: 36.0,
-                child: Row(
-                  children: [
-                    const Text('Add due date'),
-                    Checkbox(
-                      value: _hasDueDate,
-                      onChanged: (value) {
-                        setState(() {
-                          _hasDueDate = value!;
-                          _addDueDate();
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              if (_hasDueDate && _dueDate != null)
-                SizedBox(
-                  height: 36.0,
-                  child: Text("Due Date: " +
-                      DateFormat('d MMM').format(_dueDate!).toString()),
-                ),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  for (final task in _tasks)
-                    Dismissible(
-                      key: Key(task.id.toString()),
-                      background: Container(
-                          color: Colors.red, child: const Icon(Icons.delete)),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        if (task.id != null) {
-                          DatabaseHelper.instance.deleteTask(task.id!);
-                        }
-                        setState(() {
-                          _tasks.remove(task);
-                        });
-                      },
-                      child: TaskRow(
-                        task: task,
-                      ),
-                    )
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      String taskName = '';
-                      return AlertDialog(
-                        title: const Text('Add task'),
-                        content: TextField(
-                          autofocus: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Task name',
-                          ),
-                          onChanged: (value) {
-                            taskName = value;
-                          },
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  elevation: 3.0,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _hasDueDate ? 'Due Date:' : 'No due date',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            ToggleSwitch(
+                              iconSize: 10,
+                              cornerRadius: 20.0,
+                              activeBgColors: [
+                                [Colors.grey!],
+                                [Colors.green[800]!]
+                              ],
+                              radiusStyle: true,
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: Colors.grey[300],
+                              inactiveFgColor: Colors.white,
+                              initialLabelIndex: _hasDueDate ? 1 : 0,
+                              labels: ['off', 'on'],
+                              totalSwitches: 2,
+                              onToggle: (index) {
+                                setState(() {
+                                  _hasDueDate = !_hasDueDate;
+                                  _addDueDate();
+                                });
+                                print('switched to: $index');
+                              },
+                            )
+                          ],
                         ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
+                      ),
+                      if (_hasDueDate && _dueDate != null)
+                        SizedBox(
+                          height: 36.0,
+                          child: Text(
+                              DateFormat('d MMM').format(_dueDate!).toString(),
+                              style: TextStyle(
+                                fontSize: 20.0,
+                              )),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Text("TASKS"),
+              Card(
+                child: Column(
+                  children: [
+                    ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        for (final task in _tasks)
+                          Dismissible(
+                            key: Key(task.id.toString()),
+                            background: Container(
+                                color: Colors.red,
+                                child: const Icon(Icons.delete)),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              if (task.id != null) {
+                                DatabaseHelper.instance.deleteTask(task.id!);
+                              }
                               setState(() {
-                                _tasks.add(
-                                    Task(name: taskName, isCompleted: false));
+                                _tasks.remove(task);
                               });
-                              Navigator.pop(context);
                             },
-                            child: const Text('Add'),
+                            child: TaskRow(
+                              task: task,
+                            ),
+                          )
+                      ],
+                    ),
+                    Material(
+                      borderRadius: BorderRadius.circular(4.0),
+                      elevation: 3.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                String taskName = '';
+                                return AlertDialog(
+                                  title: const Text('Add task'),
+                                  content: TextField(
+                                    autofocus: true,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Task name',
+                                    ),
+                                    onChanged: (value) {
+                                      taskName = value;
+                                    },
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _tasks.add(Task(
+                                              name: taskName,
+                                              isCompleted: false));
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        'Add',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(Icons.add_circle),
+                              SizedBox(width: 5),
+                              Text('Add task'),
+                            ],
                           ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Row(
-                  children: const [
-                    Icon(Icons.add),
-                    SizedBox(width: 5),
-                    Text('Add task'),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
