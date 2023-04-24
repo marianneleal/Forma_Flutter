@@ -26,23 +26,27 @@ class HabitRow extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     constraints: BoxConstraints(minWidth: 50),
                     width: 35.0,
                     height: 35.0,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    margin: const EdgeInsets.only(left: 4, right: 20),
+                    margin: const EdgeInsets.only(left: 4, right: 10),
                     decoration: BoxDecoration(
                       color: Color(habit.color),
                       shape: BoxShape.circle,
                     ),
                   ),
-                  Text(habit.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                      )),
-                  const Spacer(),
+                  Expanded(
+                    child: Wrap(spacing: 8.0, children: [
+                      Text(habit.name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                          )),
+                    ]),
+                  ),
+                  Icon(Icons.navigate_next, color: Colors.grey[600], size: 30)
                 ],
               ),
             ),

@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-      key: Key('home'),
+      key: const Key('home'),
       onVisibilityChanged: (visibilityInfo) {
         if (visibilityInfo.visibleFraction == 1) {
           setState(() {
@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
           appBar: AppBar(
             title: const Text(
               'My Habits',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 26),
             ),
           ),
           body: Column(
@@ -50,7 +50,12 @@ class _HomeState extends State<Home> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return snapshot.data!.isEmpty
-                        ? const Center(child: Text("No habits yet. Add one!"))
+                        ? Padding(
+                            padding: const EdgeInsets.all(80.0),
+                            child: const Center(
+                                child: Text("No habits yet. Add one!",
+                                    style: TextStyle(fontSize: 20))),
+                          )
                         : ListView(
                             shrinkWrap: true,
                             children: snapshot.data!
