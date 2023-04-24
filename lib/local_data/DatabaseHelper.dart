@@ -79,10 +79,14 @@ class DatabaseHelper {
     return await batch.commit(noResult: true);
   }
 
-  Future<int> updateTask(Task task) async {
+  Future updateTasks(List<Task> tasks) async {
     Database db = await instance.database;
-    return await db
-        .update('tasks', task.toMap(), where: 'id = ?', whereArgs: [task.id]);
+    Batch batch = db.batch();
+    for (Task task in tasks) {
+      batch
+          .update('tasks', task.toMap(), where: 'id = ?', whereArgs: [task.id]);
+    }
+    return await batch.commit(noResult: true);
   }
 
   Future<int> deleteTask(int id) async {
