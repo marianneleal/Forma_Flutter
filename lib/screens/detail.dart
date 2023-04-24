@@ -78,7 +78,7 @@ class _DetailState extends State<Detail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8.0),
-              Text("HABIT INFO"),
+              const Text("HABIT INFO"),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -149,9 +149,7 @@ class _DetailState extends State<Detail> {
                           children: [
                             Text(
                               _hasDueDate ? 'Due Date:' : 'No due date',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                              ),
+                              style: const TextStyle(fontSize: 20.0),
                             ),
                             ToggleSwitch(
                               iconSize: 10,
@@ -183,7 +181,7 @@ class _DetailState extends State<Detail> {
                           height: 36.0,
                           child: Text(
                               DateFormat('d MMM').format(_dueDate!).toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20.0,
                               )),
                         ),
@@ -191,17 +189,17 @@ class _DetailState extends State<Detail> {
                   ),
                 ),
               ),
-              Text("TASKS"),
+              const Text("TASKS"),
               Card(
                 child: Column(
                   children: [
-                    ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                    Column(
+                      // shrinkWrap: true,
+                      // physics: const NeverScrollableScrollPhysics(),
                       children: [
                         for (final task in _tasks)
                           Dismissible(
-                            key: Key(task.id.toString()),
+                            key: Key(task.hashCode.toString()),
                             background: Container(
                                 color: Colors.red,
                                 child: const Icon(Icons.delete)),
@@ -286,17 +284,33 @@ class _DetailState extends State<Detail> {
         ),
       ),
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        final habitId = await DatabaseHelper.instance.insertHabit(
-          Habit(
+        if (widget.habit?.id == null) {
+          final habitId = await DatabaseHelper.instance.insertHabit(Habit(
             name: _nameController.text,
             color: _color.value,
             dueDate: _dueDate,
-          ),
-        );
-        for (Task task in _tasks) {
-          task.habitId = habitId;
+          ));
+          for (Task task in _tasks) {
+            task.habitId = habitId;
+          }
+        } else {
+          widget.habit!.name = _nameController.text;
+          widget.habit!.color = _color.value;
+          widget.habit!.dueDate = _dueDate;
+          await DatabaseHelper.instance.updateHabit(widget.habit!);
+          for (Task task in _tasks) {
+            task.habitId = widget.habit!.id!;
+          }
         }
-        await DatabaseHelper.instance.insertTasks(_tasks);
+
+        final newTasks = _tasks.where((task) => task.id == null).toList();
+        final existingTasks = _tasks.where((task) => task.id != null).toList();
+
+        // await two futures
+        await Future.wait([
+          DatabaseHelper.instance.insertTasks(newTasks),
+          //DatabaseHelper.instance.updateTasks(existingTasks),
+        ]);
         Navigator.pop(context);
       }),
     );
