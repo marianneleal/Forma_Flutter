@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/task.dart';
+import '../models/task.dart';
 
 class TaskRow extends StatefulWidget {
   final Task task;

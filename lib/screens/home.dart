@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:forma_flutter/local_data/DatabaseHelper.dart';
-import 'package:forma_flutter/model/habit.dart';
+import 'package:forma_flutter/data/DatabaseHelper.dart';
+import 'package:forma_flutter/data/HabitDao.dart';
+import 'package:forma_flutter/models/habit.dart';
 import 'package:forma_flutter/widgets/habit_row.dart';
 import 'package:forma_flutter/screens/detail.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+import '../viewmodels/HomeViewModel.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,13 +16,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var future = DatabaseHelper.instance.getHabits();
-
+  var viewModel = HomeViewModel.instance;
+  var future = HabitDao.instance.getHabits();
   // on appear callback
   @override
   void initState() {
     super.initState();
-    future = DatabaseHelper.instance.getHabits();
+    future = HabitDao.instance.getHabits();
   }
 
   @override
@@ -29,7 +32,7 @@ class _HomeState extends State<Home> {
       onVisibilityChanged: (visibilityInfo) {
         if (visibilityInfo.visibleFraction == 1) {
           setState(() {
-            future = DatabaseHelper.instance.getHabits();
+            future = HabitDao.instance.getHabits();
           });
         }
       },
@@ -68,11 +71,11 @@ class _HomeState extends State<Home> {
                                       ),
                                       direction: DismissDirection.endToStart,
                                       onDismissed: (direction) {
-                                        DatabaseHelper.instance
+                                        HabitDao.instance
                                             .deleteHabit(habit.id!);
                                         setState(() {
-                                          future = DatabaseHelper.instance
-                                              .getHabits();
+                                          future =
+                                              HabitDao.instance.getHabits();
                                           snapshot.data!.remove(habit);
                                         });
                                       },

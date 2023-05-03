@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:forma_flutter/model/habit.dart';
+import 'package:forma_flutter/models/habit.dart';
 
 import '../screens/detail.dart';
 

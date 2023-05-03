@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:forma_flutter/local_data/DatabaseHelper.dart';
+import 'package:forma_flutter/data/DatabaseHelper.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:forma_flutter/data/HabitDao.dart';
+import 'package:forma_flutter/data/TaskDao.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-import '../model/habit.dart';
-import '../model/task.dart';
+import '../models/habit.dart';
+import '../models/task.dart';
 import 'package:intl/intl.dart';
 import '../widgets/task_row.dart';
 
@@ -47,8 +49,7 @@ class _DetailState extends State<Detail> {
 
   Future<void> _fetchTasks() async {
     if (widget.habit != null) {
-      _tasks =
-          await DatabaseHelper.instance.getTasksByHabitId(widget.habit!.id!);
+      _tasks = await TaskDao.instance.getTasksByHabitId(widget.habit!.id!);
       setState(() {});
     }
   }
@@ -59,12 +60,12 @@ class _DetailState extends State<Detail> {
     habit.dueDate = _dueDate;
     habit.color = _color.value;
     if (widget.habit == null) {
-      await DatabaseHelper.instance.insertHabit(habit);
+      await HabitDao.instance.insertHabit(habit);
     } else {
-      await DatabaseHelper.instance.updateHabit(habit);
+      await HabitDao.instance.updateHabit(habit);
     }
     for (final task in _tasks) {
-      await DatabaseHelper.instance.updateHabit(habit);
+      await HabitDao.instance.updateHabit(habit);
     }
   }
 
@@ -209,7 +210,7 @@ class _DetailState extends State<Detail> {
                             direction: DismissDirection.endToStart,
                             onDismissed: (direction) {
                               if (task.id != null) {
-                                DatabaseHelper.instance.deleteTask(task.id!);
+                                TaskDao.instance.deleteTask(task.id!);
                               }
                               setState(() {
                                 _tasks.remove(task);
@@ -290,7 +291,7 @@ class _DetailState extends State<Detail> {
           child: const Icon(Icons.save),
           onPressed: () async {
             if (widget.habit?.id == null) {
-              final habitId = await DatabaseHelper.instance.insertHabit(Habit(
+              final habitId = await HabitDao.instance.insertHabit(Habit(
                 name: _nameController.text,
                 color: _color.value,
                 dueDate: _dueDate,
@@ -302,7 +303,7 @@ class _DetailState extends State<Detail> {
               widget.habit!.name = _nameController.text;
               widget.habit!.color = _color.value;
               widget.habit!.dueDate = _dueDate;
-              await DatabaseHelper.instance.updateHabit(widget.habit!);
+              await HabitDao.instance.updateHabit(widget.habit!);
               for (Task task in _tasks) {
                 task.habitId = widget.habit!.id!;
               }
@@ -314,8 +315,8 @@ class _DetailState extends State<Detail> {
 
             // await two futures
             await Future.wait([
-              DatabaseHelper.instance.insertTasks(newTasks),
-              DatabaseHelper.instance.updateTasks(existingTasks),
+              TaskDao.instance.insertTasks(newTasks),
+              TaskDao.instance.updateTasks(existingTasks),
             ]);
             Navigator.pop(context);
           }),
