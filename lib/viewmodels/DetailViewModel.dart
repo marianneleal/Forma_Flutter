@@ -63,6 +63,8 @@ class DetailViewModel extends ChangeNotifier {
       TaskDao.instance.insertTasks(newTasks),
       TaskDao.instance.updateTasks(existingTasks),
     ]);
+
+    notifyListeners();
   }
 
   Future<void> fetchTasks() async {
@@ -85,5 +87,13 @@ class DetailViewModel extends ChangeNotifier {
   void toggleDueDate() {
     hasDueDate = !hasDueDate;
     notifyListeners();
+  }
+
+  void deleteTask(Task task) async {
+    tasks.remove(task);
+    if (task.id != null) {
+      await TaskDao.instance.deleteTask(task.id!);
+      notifyListeners();
+    }
   }
 }

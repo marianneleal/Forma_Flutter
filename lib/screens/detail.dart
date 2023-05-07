@@ -20,7 +20,6 @@ class Detail extends StatefulWidget {
 }
 
 // TODO: remove all setState & call notifyListeners() when needed in viewModel
-// TODO: make view stateless, because setState is no longer needed
 
 class _DetailState extends State<Detail> {
   @override
@@ -53,9 +52,7 @@ class _DetailState extends State<Detail> {
                     const SizedBox(height: 16.0),
                     InkWell(
                       onTap: () {
-                        setState(() {
-                          viewModel.toggleColorPicker();
-                        });
+                        viewModel.toggleColorPicker();
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -94,10 +91,8 @@ class _DetailState extends State<Detail> {
                       ColorPicker(
                         pickerColor: viewModel.color,
                         onColorChanged: (color) {
-                          setState(() {
-                            viewModel.setColor(color);
-                            print(color);
-                          });
+                          viewModel.setColor(color);
+                          print(color);
                         },
                       ),
                     Padding(
@@ -132,10 +127,8 @@ class _DetailState extends State<Detail> {
                                     labels: const ['off', 'on'],
                                     totalSwitches: 2,
                                     onToggle: (index) {
-                                      setState(() {
-                                        viewModel.toggleDueDate();
-                                        _addDueDate(viewModel);
-                                      });
+                                      viewModel.toggleDueDate();
+                                      _addDueDate(viewModel);
                                       print('switched to: $index');
                                     },
                                   )
@@ -174,17 +167,7 @@ class _DetailState extends State<Detail> {
                                       child: const Icon(Icons.delete)),
                                   direction: DismissDirection.endToStart,
                                   onDismissed: (direction) {
-                                    // TODO: viewModel.deleteTask(task),
-                                    // TODO: make if/else in viewModel.deleteTask method
-
-                                    if (task.id != null) {
-                                      // TODO: --> viewModel.deleteTask(task);
-                                      TaskDao.instance.deleteTask(task.id!);
-                                    }
-                                    setState(() {
-                                      // TODO: this should be a viewmodel method!
-                                      viewModel.tasks.remove(task);
-                                    });
+                                    viewModel.deleteTask(task);
                                   },
                                   child: TaskRow(
                                     task: task,
@@ -223,11 +206,9 @@ class _DetailState extends State<Detail> {
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              setState(() {
-                                                viewModel.tasks.add(Task(
-                                                    name: taskName,
-                                                    isCompleted: false));
-                                              });
+                                              viewModel.tasks.add(Task(
+                                                  name: taskName,
+                                                  isCompleted: false));
                                               Navigator.pop(context);
                                             },
                                             child: const Text(
@@ -288,15 +269,11 @@ class _DetailState extends State<Detail> {
   Future<void> _addDueDate(DetailViewModel viewModel) async {
     final date = await _selectDueDate(viewModel);
     if (date != null) {
-      setState(() {
-        viewModel.hasDueDate = true;
-        viewModel.dueDate = date;
-      });
+      viewModel.hasDueDate = true;
+      viewModel.dueDate = date;
     } else {
-      setState(() {
-        viewModel.hasDueDate = false;
-        viewModel.dueDate = null;
-      });
+      viewModel.hasDueDate = false;
+      viewModel.dueDate = null;
     }
   }
 }
