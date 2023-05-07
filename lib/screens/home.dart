@@ -79,7 +79,6 @@ class _HomeState extends State<Home> {
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
                       viewModel.removeHabit(habit);
-                      viewModel.getAllHabits();
                     },
                     child: HabitRow(habit: habit)))
                 .toList(),

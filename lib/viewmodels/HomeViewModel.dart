@@ -26,5 +26,6 @@ class HomeViewModel extends ChangeNotifier {
 
   void removeHabit(Habit habit) async {
     await _habitDao.deleteHabit(habit.id!);
+    getAllHabits();
   }
 }
