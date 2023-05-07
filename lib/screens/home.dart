@@ -78,11 +78,8 @@ class _HomeState extends State<Home> {
                     ),
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
-                      // TODO: remove setState?
-                      setState(() {
-                        viewModel.removeHabit(habit);
-                        viewModel.getAllHabits();
-                      });
+                      viewModel.removeHabit(habit);
+                      viewModel.getAllHabits();
                     },
                     child: HabitRow(habit: habit)))
                 .toList(),
