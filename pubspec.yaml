@@ -39,6 +39,7 @@ dependencies:
   intl: ^0.18.1
   toggle_switch: ^2.1.0
   visibility_detector: ^0.4.0+2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

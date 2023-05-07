@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class HabitDao {
   HabitDao._privateConstructor();
   static final HabitDao instance = HabitDao._privateConstructor();
+
   Future<List<Habit>> getHabits() async {
     Database db = await DatabaseHelper.instance.database;
     var habits = await db.query('habits');
