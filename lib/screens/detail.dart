@@ -19,8 +19,6 @@ class Detail extends StatefulWidget {
   _DetailState createState() => _DetailState();
 }
 
-// TODO: remove all setState & call notifyListeners() when needed in viewModel
-
 class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {

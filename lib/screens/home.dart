@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:forma_flutter/data/DatabaseHelper.dart';
-import 'package:forma_flutter/data/HabitDao.dart';
-import 'package:forma_flutter/models/habit.dart';
 import 'package:forma_flutter/widgets/habit_row.dart';
 import 'package:forma_flutter/screens/detail.dart';
+import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../viewmodels/HomeViewModel.dart';
@@ -16,85 +14,81 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var viewModel = HomeViewModel.instance;
-  var future = HabitDao.instance.getHabits();
-  // on appear callback
-  @override
-  void initState() {
-    super.initState();
-    future = HabitDao.instance.getHabits();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: const Key('home'),
-      onVisibilityChanged: (visibilityInfo) {
-        if (visibilityInfo.visibleFraction == 1) {
-          setState(() {
-            future = HabitDao.instance.getHabits();
-          });
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'My Habits',
-              style: TextStyle(fontSize: 26),
-            ),
-          ),
-          body: Column(
-            children: [
-              FutureBuilder<List<Habit>>(
-                  future: future,
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<Habit>> snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return snapshot.data!.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(80.0),
-                            child: Center(
-                                child: Text("No habits yet. Add one!",
-                                    style: TextStyle(fontSize: 20))),
-                          )
-                        : Expanded(
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: snapshot.data!
-                                  .map((habit) => Dismissible(
-                                      key: Key(habit.id.toString()),
-                                      background: Container(
-                                        color: Colors.red,
-                                        child: const Icon(Icons.delete),
-                                      ),
-                                      direction: DismissDirection.endToStart,
-                                      onDismissed: (direction) {
-                                        HabitDao.instance
-                                            .deleteHabit(habit.id!);
-                                        setState(() {
-                                          future =
-                                              HabitDao.instance.getHabits();
-                                          snapshot.data!.remove(habit);
-                                        });
-                                      },
-                                      child: HabitRow(habit: habit)))
-                                  .toList(),
-                            ),
-                          );
-                  }),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Detail()),
-                );
-              },
-              child: const Icon(Icons.add),
-              backgroundColor: Colors.purple)),
+    return ChangeNotifierProvider(
+      create: (context) => HomeViewModel(),
+      child: Consumer<HomeViewModel>(
+        builder: (context, viewModel, child) {
+          return VisibilityDetector(
+            key: const Key('home'),
+            onVisibilityChanged: (visibilityInfo) {
+              if (visibilityInfo.visibleFraction == 1) {
+                viewModel.getAllHabits();
+              }
+            },
+            child: Scaffold(
+                appBar: AppBar(
+                  title: const Text(
+                    'My Habits',
+                    style: TextStyle(fontSize: 26),
+                  ),
+                ),
+                body: Column(
+                  children: [
+                    _buildHabitList(viewModel),
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Detail()),
+                      );
+                    },
+                    child: const Icon(Icons.add),
+                    backgroundColor: Colors.purple)),
+          );
+        },
+      ),
     );
+  }
+
+  Widget _buildHabitList(HomeViewModel viewModel) {
+    if (viewModel.habits == null) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      if (viewModel.habits!.isEmpty) {
+        return const Center(
+          child: Text(
+            "No habits yet. Add one!",
+            style: TextStyle(fontSize: 20),
+          ),
+        );
+      } else {
+        return Expanded(
+          child: ListView(
+            shrinkWrap: true,
+            children: viewModel.habits!
+                .map((habit) => Dismissible(
+                    key: UniqueKey(),
+                    background: Container(
+                      color: Colors.red,
+                      child: const Icon(Icons.delete),
+                    ),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      // TODO: remove setState?
+                      setState(() {
+                        viewModel.removeHabit(habit);
+                        viewModel.getAllHabits();
+                      });
+                    },
+                    child: HabitRow(habit: habit)))
+                .toList(),
+          ),
+        );
+      }
+    }
   }
 }
